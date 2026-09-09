@@ -291,9 +291,7 @@ export class ChatAppNew implements OnInit, OnDestroy {
     this.intentionallyClosed = false;
 
 
-    const ws = new WebSocket(
-      'ws:newnodeserverjs-for-update1-1.onrender.com'
-    );
+    const ws = new WebSocket('wss:newnodeserverjs-for-update-server.onrender.com');
 
 
     /*
