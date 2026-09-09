@@ -284,7 +284,7 @@ export class ChatAppNew implements OnInit, OnDestroy {
     console.count('[WS] NEW WebSocket CREATED');
 
     console.log(
-      '[WS] Connecting to ws:https://newnodeserverjs-for-update1-1.onrender.com'
+      '[WS] Connecting to ws:newnodeserverjs-for-update1-1.onrender.com'
     );
 
 
@@ -292,7 +292,7 @@ export class ChatAppNew implements OnInit, OnDestroy {
 
 
     const ws = new WebSocket(
-      'ws:https://newnodeserverjs-for-update1-1.onrender.com'
+      'ws:newnodeserverjs-for-update1-1.onrender.com'
     );
 
 
