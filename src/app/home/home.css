@@ -1,0 +1,161 @@
+/* Full page background */
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Login Card */
+.login-container {
+  width: 100%;
+  max-width: 430px;
+  background: rgba(255, 255, 255, 0.98);
+  padding: 35px 35px 30px;
+  border-radius: 20px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.18);
+  animation: cardAppear 0.6s ease;
+}
+
+/* Heading */
+.login-container h4 {
+  font-size: 26px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 30px !important;
+}
+
+/* Form group */
+.form-group {
+  margin-bottom: 5px;
+}
+
+/* Labels */
+.form-label {
+  font-weight: 600;
+  color: #444;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+/* Inputs */
+.form-control {
+  height: 50px;
+  border: 1px solid #d9d9d9;
+  border-radius: 10px;
+  padding: 0 15px;
+  font-size: 15px;
+  transition: all 0.25s ease;
+  box-shadow: none;
+}
+
+.form-control::placeholder {
+  color: #aaa;
+}
+
+/* Input focus */
+.form-control:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+  outline: none;
+}
+
+/* Submit button */
+.btn-success {
+  height: 50px;
+  margin-top: 15px;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  transition: all 0.25s ease;
+  box-shadow: 0 7px 18px rgba(102, 126, 234, 0.3);
+}
+
+.btn-success:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 22px rgba(102, 126, 234, 0.4);
+}
+
+.btn-success:active {
+  transform: translateY(0);
+}
+
+/* Loading */
+#loadingBar {
+  text-align: center;
+  margin-top: 15px;
+  color: #667eea;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* Card animation */
+@keyframes cardAppear {
+  from {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Tablet */
+@media (max-width: 768px) {
+  .login-page {
+    padding: 20px;
+  }
+
+  .login-container {
+    max-width: 420px;
+    padding: 30px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .login-page {
+    padding: 15px;
+  }
+
+  .login-container {
+    padding: 28px 22px;
+    border-radius: 16px;
+  }
+
+  .login-container h4 {
+    font-size: 23px;
+    margin-bottom: 25px !important;
+  }
+
+  .form-control {
+    height: 48px;
+  }
+
+  .btn-success {
+    height: 48px;
+  }
+}
+
+/* Very small screens */
+@media (max-width: 350px) {
+  .login-container {
+    padding: 24px 18px;
+  }
+
+  .login-container h4 {
+    font-size: 21px;
+  }
+}

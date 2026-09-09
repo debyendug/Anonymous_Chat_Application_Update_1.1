@@ -1,0 +1,298 @@
+<div class="app-shell">
+
+  <!-- JOIN SCREEN -->
+  <section class="join-screen" *ngIf="showJoin">
+    <div class="join-card">
+      <div class="brand-mark"><i class="bi bi-chat-heart-fill"></i></div>
+      <h1>Anonymous Chat Room</h1>
+      <p class="subtitle">Talk in real time. No database. No chat history.</p>
+
+      <div class="join-input">
+        <i class="bi bi-person"></i>
+        <input
+          [(ngModel)]="joinName"
+          (keyup.enter)="join()"
+          maxlength="40"
+          placeholder="Enter your name"
+          autocomplete="off">
+      </div>
+
+      <button class="primary-btn w-100" (click)="join()" [disabled]="!joinName.trim()">
+        Join Chat Room <i class="bi bi-arrow-right"></i>
+      </button>
+
+      <small><i class="bi bi-shield-check"></i> Only online users can communicate.</small>
+    </div>
+  </section>
+
+  <!-- CHAT APP -->
+  <section class="chat-layout" *ngIf="!showJoin">
+
+    <!-- LEFT DRAWER -->
+    <aside class="drawer" [class.open]="showMenu">
+      <div class="drawer-head">
+        <div class="brand-mini"><i class="bi bi-chat-heart-fill"></i></div>
+        <div>
+          <strong>Anonymous Chat</strong>
+          <small>Private • Real-time</small>
+        </div>
+        <button class="icon-btn close-mobile" (click)="showMenu=false">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+
+      <div class="drawer-user">
+        <div class="avatar large">
+          <img *ngIf="currentUser.avatar" [src]="currentUser.avatar" alt="Profile">
+          <span *ngIf="!currentUser.avatar">{{ initials(currentUser.name) }}</span>
+        </div>
+        <div class="drawer-user-info">
+          <strong>{{ currentUser.name }}</strong>
+          <span><i class="bi bi-circle-fill"></i> Online</span>
+        </div>
+      </div>
+
+      <div class="drawer-actions">
+        <button class="drawer-item active" (click)="home()">
+          <i class="bi bi-house-door"></i><span>Home</span>
+        </button>
+
+        <button class="drawer-item" (click)="openProfile()">
+          <i class="bi bi-person-circle"></i><span>My Profile</span>
+        </button>
+
+        <div class="drawer-section-title">Chat</div>
+
+        <button class="mode-btn" [class.selected]="activeMode==='single'" (click)="activeMode='single'">
+          <i class="bi bi-person"></i>
+          <span>Single Chat</span>
+          <i *ngIf="activeMode==='single'" class="bi bi-check2 ms-auto"></i>
+        </button>
+
+        <button class="mode-btn" [class.selected]="activeMode==='group'" (click)="activeMode='group'">
+          <i class="bi bi-people"></i>
+          <span>Group Chat</span>
+          <i *ngIf="activeMode==='group'" class="bi bi-check2 ms-auto"></i>
+        </button>
+
+        <div class="drawer-section-title">More</div>
+
+        <button class="drawer-item" (click)="toggleMore()">
+          <i class="bi bi-three-dots"></i><span>More options</span>
+          <i class="bi ms-auto" [class.bi-chevron-down]="!showMore" [class.bi-chevron-up]="showMore"></i>
+        </button>
+
+        <div class="more-list" *ngIf="showMore">
+          <button class="sub-item"><i class="bi bi-file-text"></i> Terms & Conditions</button>
+          <button class="sub-item"><i class="bi bi-headset"></i> Contact Admin</button>
+          <button class="sub-item"><i class="bi bi-envelope"></i> Mail to Admin</button>
+          <button class="sub-item"><i class="bi bi-info-circle"></i> Guidelines</button>
+        </div>
+      </div>
+
+      <div class="drawer-bottom">
+        <button class="leave-btn" (click)="leaveChat()">
+          <i class="bi bi-box-arrow-left"></i> Leave Chat
+        </button>
+      </div>
+    </aside>
+
+    <div class="drawer-backdrop" *ngIf="showMenu" (click)="showMenu=false"></div>
+
+    <!-- MAIN -->
+    <main class="chat-main">
+
+      <!-- HEADER -->
+      <header class="chat-header">
+        <div class="header-left">
+          <button class="icon-btn hamburger" (click)="toggleMenu()">
+            <i class="bi bi-list"></i>
+          </button>
+          <div class="header-title">
+            <h2>Anonymous Chat Room</h2>
+            <div class="status-line">
+              <span class="status-dot" [class.offline]="!connected"></span>
+              {{ connected ? 'Connected' : 'Connecting...' }}
+              <span class="separator">•</span>
+              {{ onlineUsers.length }} online
+            </div>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <div class="online-dropdown">
+            <button class="online-btn" (click)="showOnline=!showOnline">
+              <span class="online-pulse"></span>
+              Online
+              <span class="count">{{ onlineUsers.length }}</span>
+              <i class="bi bi-chevron-down"></i>
+            </button>
+
+            <div class="online-panel" *ngIf="showOnline">
+              <div class="online-panel-title">People online</div>
+              <div class="online-person" *ngFor="let user of onlineUsers; trackBy: trackById">
+                <div class="avatar small">
+                  <img *ngIf="user.avatar" [src]="user.avatar" alt="">
+                  <span *ngIf="!user.avatar">{{ initials(user.name) }}</span>
+                </div>
+                <div>
+                  <strong>{{ user.name }}</strong>
+                  <small><i class="bi bi-circle-fill"></i> Online</small>
+                </div>
+                <i *ngIf="user.id===currentUser.id" class="bi bi-person-check ms-auto"></i>
+              </div>
+              <div class="empty-online" *ngIf="!onlineUsers.length">Nobody is online.</div>
+            </div>
+          </div>
+
+          <button class="header-avatar" (click)="openProfile()">
+            <img *ngIf="currentUser.avatar" [src]="currentUser.avatar" alt="">
+            <span *ngIf="!currentUser.avatar">{{ initials(currentUser.name) }}</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- CHAT -->
+      <div class="chat-content">
+        <div class="welcome-card">
+          <div class="welcome-icon"><i class="bi bi-shield-lock"></i></div>
+          <div>
+            <strong>Welcome to the anonymous room</strong>
+            <p>Messages are live only. When users leave, their chat connection is closed.</p>
+          </div>
+        </div>
+
+        <div class="messages">
+          <div
+            class="message-row"
+            *ngFor="let msg of messages; trackBy: trackById"
+            [class.mine]="msg.mine"
+            [class.system]="msg.id.startsWith('system-')">
+
+            <ng-container *ngIf="!msg.id.startsWith('system-')">
+              <div class="avatar msg-avatar" *ngIf="!msg.mine">
+                <img *ngIf="msg.from.avatar" [src]="msg.from.avatar" alt="">
+                <span *ngIf="!msg.from.avatar">{{ initials(msg.from.name) }}</span>
+              </div>
+
+              <div class="bubble-wrap">
+                <div class="sender-name" *ngIf="!msg.mine">{{ msg.from.name }}</div>
+                <div class="bubble">
+                  <div class="message-text">{{ msg.text }}</div>
+                  <span class="message-time">{{ msg.time }}</span>
+                </div>
+              </div>
+
+              <div class="avatar msg-avatar mine-avatar" *ngIf="msg.mine">
+                <img *ngIf="msg.from.avatar" [src]="msg.from.avatar" alt="">
+                <span *ngIf="!msg.from.avatar">{{ initials(msg.from.name) }}</span>
+              </div>
+            </ng-container>
+
+            <div class="system-message" *ngIf="msg.id.startsWith('system-')">
+              <span class="system-dot"></span>
+              {{ msg.text }}
+              <time>{{ msg.time }}</time>
+            </div>
+          </div>
+
+          <div class="typing-indicator" *ngIf="typingText">
+            <span class="typing-dots"><i></i><i></i><i></i></span>
+            {{ typingText }}
+          </div>
+        </div>
+      </div>
+
+      <!-- COMPOSER -->
+      <footer class="composer-area">
+        <div class="composer">
+          <button class="attach-btn" title="Attachments are not persisted">
+            <i class="bi bi-plus-lg"></i>
+          </button>
+
+          <textarea
+            [(ngModel)]="messageText"
+            (input)="onTyping()"
+            (keydown.enter)="sendMessage(); $event.preventDefault()"
+            rows="1"
+            maxlength="4000"
+            placeholder="Write a message..."
+            autocomplete="off"></textarea>
+
+          <button class="send-btn" (click)="sendMessage()" [disabled]="!messageText.trim() || !connected">
+            <i class="bi bi-send-fill"></i>
+          </button>
+        </div>
+        <div class="composer-note">
+          <i class="bi bi-lock-fill"></i> Real-time connection • No database storage
+        </div>
+      </footer>
+    </main>
+  </section>
+
+  <!-- PROFILE MODAL -->
+  <div class="modal-layer" *ngIf="showProfile" (click)="showProfile=false">
+    <div class="profile-modal" (click)="$event.stopPropagation()">
+      <div class="modal-head">
+        <div>
+          <h3>My Profile</h3>
+          <p>Changes are reflected immediately for online users.</p>
+        </div>
+        <button class="icon-btn" (click)="showProfile=false"><i class="bi bi-x-lg"></i></button>
+      </div>
+
+      <div class="profile-preview">
+        <div class="avatar profile-avatar">
+          <img *ngIf="currentUser.avatar" [src]="currentUser.avatar" alt="">
+          <span *ngIf="!currentUser.avatar">{{ initials(currentUser.name) }}</span>
+        </div>
+        <div>
+          <strong>{{ currentUser.name }}</strong>
+          <small>User ID: {{ currentUser.id }}</small>
+        </div>
+      </div>
+
+      <div class="profile-field">
+        <label>Profile Image</label>
+        <div class="image-actions">
+          <label class="outline-btn">
+            <i class="bi bi-cloud-arrow-up"></i> Upload Image
+            <input type="file" accept="image/*" hidden (change)="onAvatarSelected($event)">
+          </label>
+          <button class="delete-btn" *ngIf="currentUser.avatar" (click)="deleteAvatar()">
+            <i class="bi bi-trash3"></i> Delete
+          </button>
+        </div>
+      </div>
+
+      <div class="profile-field">
+        <label>User Name</label>
+        <div class="editable-row" *ngIf="!showNameEditor">
+          <div><strong>{{ currentUser.name }}</strong><small>Shown in chat</small></div>
+          <button class="edit-btn" (click)="showNameEditor=true"><i class="bi bi-pencil"></i> Change</button>
+        </div>
+        <div class="edit-box" *ngIf="showNameEditor">
+          <input [(ngModel)]="editName" maxlength="40" (keyup.enter)="updateName()">
+          <button class="primary-btn" (click)="updateName()">Save</button>
+        </div>
+      </div>
+
+      <div class="profile-field">
+        <label>Phone Number</label>
+        <div class="editable-row" *ngIf="!showPhoneEditor">
+          <div><strong>{{ currentUser.phone || 'Not added' }}</strong><small>Optional</small></div>
+          <button class="edit-btn" (click)="showPhoneEditor=true"><i class="bi bi-pencil"></i> Change</button>
+        </div>
+        <div class="edit-box" *ngIf="showPhoneEditor">
+          <input [(ngModel)]="editPhone" maxlength="20" placeholder="Phone number">
+          <button class="primary-btn" (click)="updatePhone()">Save</button>
+        </div>
+      </div>
+
+      <div class="profile-field readonly-field">
+        <label>User ID</label>
+        <div><code>{{ currentUser.id }}</code></div>
+      </div>
+    </div>
+  </div>
+</div>
