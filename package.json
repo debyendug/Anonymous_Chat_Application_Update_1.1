@@ -34,8 +34,12 @@
     "typescript": "~6.0.2",
     "vitest": "^4.0.8"
   },
+  "engines": {
+  "node": ">=24.15.0"
+},
   "description": "This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.0.7.",
   "main": "index.js",
   "keywords": [],
   "type": "commonjs"
 }
+
