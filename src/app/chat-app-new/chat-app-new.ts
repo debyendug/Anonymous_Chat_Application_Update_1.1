@@ -284,7 +284,7 @@ export class ChatAppNew implements OnInit, OnDestroy {
     console.count('[WS] NEW WebSocket CREATED');
 
     console.log(
-      '[WS] Connecting to ws://localhost:8080'
+      '[WS] Connecting to ws:https://secret-chat-application-we1g.onrender.com'
     );
 
 
@@ -292,7 +292,7 @@ export class ChatAppNew implements OnInit, OnDestroy {
 
 
     const ws = new WebSocket(
-      'ws://localhost:8080'
+      'ws:https://secret-chat-application-we1g.onrender.com'
     );
 
 
